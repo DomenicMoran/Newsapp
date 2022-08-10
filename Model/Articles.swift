@@ -16,7 +16,6 @@ struct NewsResponse: Codable {
 
 // MARK: - Article
 struct Article: Codable, Hashable {
-    let source: Source?
     let author: String?
     let title: String?
     let articleDescription: String?
@@ -24,10 +23,4 @@ struct Article: Codable, Hashable {
     let urlToImage: String?
     let publishedAt: Date?
     let content: String?
-}
-
-// MARK: - Source
-struct Source: Codable, Hashable {
-    let id: String?
-    let name: String
 }

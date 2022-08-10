@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainVC: UIViewController {
+class MainVC: UIViewController, UITableViewDelegate {
 
     enum Section {
         case main
@@ -17,7 +17,7 @@ class MainVC: UIViewController {
     
     var dataSource: UITableViewDiffableDataSource<Section, Article>!
     
-    private var data: [Article] = []
+    private var articels: [Article] = []
     
     private var containerView: UIView!
 
@@ -44,9 +44,10 @@ class MainVC: UIViewController {
         NetworkManager.shared.getNewsItems { (result) in
             switch result {
             case .success(let newsResponse):
+                self.articels = newsResponse.articles
                 self.updateData(articel: newsResponse.articles)
             case .failure(let error):
-                print(error.rawValue)
+                self.presentWarningAlert(title: "Fehler", message: error.rawValue)
             }
             self.dismissLoadingSpinner()
         }
@@ -60,6 +61,7 @@ class MainVC: UIViewController {
     }
     
     private func configureTableView() {
+        tableView.delegate = self
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.pinToEdges(of: view)
@@ -110,6 +112,14 @@ class MainVC: UIViewController {
         DispatchQueue.main.async {
             self.containerView.removeFromSuperview()
             self.containerView = nil
+        }
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        if let selectedArticel = dataSource.itemIdentifier(for: indexPath){
+            let detailVC = DetailVC(article: selectedArticel)
+            navigationController?.pushViewController(detailVC, animated: true)
         }
     }
     

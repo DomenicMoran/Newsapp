@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 enum NewsError: String, Error {
     case universalError = "Es ist ein unbekannter Fehler aufgetreten."
@@ -57,6 +58,22 @@ class NetworkManager {
             } catch {
                 completion(.failure(.invalidData))
             }
+        }
+        task.resume()
+    }
+    func downloadImage(from urlString: String?, completed: @escaping (UIImage) -> Void) {
+        guard let url = URL(string: urlString ?? "") else {
+            completed(#imageLiteral(resourceName: "placeholder"))
+            return
+        }
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            guard error == nil, let response = response as? HTTPURLResponse,
+                  response.statusCode == 200, let data = data, let image = UIImage(data: data) else {
+                completed(#imageLiteral(resourceName: "placeholder"))
+                return
+                
+            }
+            completed(image)
         }
         task.resume()
     }
