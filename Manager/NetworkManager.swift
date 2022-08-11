@@ -61,11 +61,20 @@ class NetworkManager {
         }
         task.resume()
     }
+    private let cache = NSCache<NSString, UIImage>()
+    
+    
     func downloadImage(from urlString: String?, completed: @escaping (UIImage) -> Void) {
         guard let url = URL(string: urlString ?? "") else {
             completed(#imageLiteral(resourceName: "placeholder"))
             return
         }
+        let cacheKey = NSString(string: url.absoluteString)
+        if let image = cache.object(forKey: cacheKey) {
+            completed(image)
+            return
+        }
+        
         let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
             guard error == nil, let response = response as? HTTPURLResponse,
                   response.statusCode == 200, let data = data, let image = UIImage(data: data) else {
@@ -74,6 +83,7 @@ class NetworkManager {
                 
             }
             completed(image)
+            self.cache.setObject(image, forKey: cacheKey)
         }
         task.resume()
     }

@@ -118,7 +118,7 @@ class MainVC: UIViewController, UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         if let selectedArticel = dataSource.itemIdentifier(for: indexPath){
-            let detailVC = DetailVC(article: selectedArticel)
+            let detailVC = DetailVC(article: selectedArticel, articles: articels)
             navigationController?.pushViewController(detailVC, animated: true)
         }
     }
