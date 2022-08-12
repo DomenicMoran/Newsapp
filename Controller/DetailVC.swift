@@ -86,7 +86,19 @@ class DetailVC: UIViewController {
     
     @objc
     private func handleFavButtonDidTapped() {
-        PersistenceManager.shared.addFav(article: article)
+        if PersistenceManager.shared.isArticleAlreadyFav(article: article) {
+            
+            PersistenceManager.shared.removeFavArticle(article: article) {
+                favoriteButton.image = UIImage(systemName: "star", withConfiguration: config)
+                NotificationCenter.default.post(name: .favoriteDidChange, object: nil)
+            }
+        } else {
+            
+            PersistenceManager.shared.addFav(article: article) {
+                favoriteButton.image = UIImage(systemName: "star.fill", withConfiguration: config)
+                NotificationCenter.default.post(name: .favoriteDidChange, object: nil)
+            }
+        }
     }
     
     @objc
@@ -146,9 +158,11 @@ class DetailVC: UIViewController {
         stackView.removeAllArrangedSubviews()
         stackView.addArrangedSubviews([titleLabel, imageView, infoLabel, contentLabel, readArticleButton])
         self.titleLabel.text = article.title
-        self.contentLabel.text = article.content
+        self.contentLabel.text = article.content == nil || article.content == "" ? article.articleDescription : article.content
         self.infoLabel.text = "Autor: \(article.author ?? "N/A") / \(article.publishedAt?.getStringRepresention() ?? "N/A") Uhr"
         self.imageView.setImage(urlString: article.urlToImage)
+        
+        favoriteButton.image = PersistenceManager.shared.isArticleAlreadyFav(article: article) ? UIImage(systemName: "star.fill", withConfiguration: config) : UIImage(systemName: "star", withConfiguration: config)
     }
 
 }

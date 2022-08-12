@@ -9,6 +9,12 @@ import UIKit
 
 extension UIView {
     
+    func addSubviews(views: [UIView]) {
+        views.forEach {
+            addSubview($0)
+        }
+    }
+    
     func pinToEdges(of superview: UIView, with padding: CGFloat = 0, considerSafeArea: Bool = false){
         NSLayoutConstraint.activate([
             self.topAnchor.constraint(equalTo: considerSafeArea ? superview.safeAreaLayoutGuide.topAnchor : superview.topAnchor, constant: padding),

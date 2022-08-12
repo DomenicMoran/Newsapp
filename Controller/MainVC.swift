@@ -13,11 +13,11 @@ class MainVC: UIViewController, UITableViewDelegate {
         case main
     }
     
-    private let tableView = UITableView()
+    let tableView = UITableView()
     
     var dataSource: UITableViewDiffableDataSource<Section, Article>!
     
-    private var articels: [Article] = []
+    var articels: [Article] = []
     
     private var containerView: UIView!
 
@@ -53,7 +53,7 @@ class MainVC: UIViewController, UITableViewDelegate {
         }
     }
     
-    private func configureVC() {
+    func configureVC() {
         view.backgroundColor = .systemBackground
         title = "Nachrichten"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -83,7 +83,7 @@ class MainVC: UIViewController, UITableViewDelegate {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Article>()
         snapshot.appendSections([.main])
         snapshot.appendItems(articel)
-        self.dataSource.apply(snapshot)
+        self.dataSource.apply(snapshot, animatingDifferences: self.tableView.window != nil)
     }
     
     func showLoadingSpinner() {
